@@ -69,15 +69,17 @@ const LogoutIcon = () => (
     </svg>
 );
 
-import { UserStats, EnrichedFavorite } from "@/lib/stats";
+import { UserStats, EnrichedFavorite, StatsHistoryPoint } from "@/lib/stats";
+import PerformanceChart from "./stats/performance-chart";
 
 interface DashboardClientProps {
     user: User;
     stats: UserStats | null;
-    favorites?: EnrichedFavorite[]; // Made optional to be safe, though usually provided
+    favorites?: EnrichedFavorite[];
+    history?: StatsHistoryPoint[];
 }
 
-export default function DashboardClient({ user, stats, favorites }: DashboardClientProps) {
+export default function DashboardClient({ user, stats, favorites, history }: DashboardClientProps) {
     const supabase = createClient();
     const router = useRouter();
     const pathname = usePathname();
@@ -222,14 +224,14 @@ export default function DashboardClient({ user, stats, favorites }: DashboardCli
                     </div>
                 </div>
 
-                {/* Recent Matches Placeholder */}
+                {/* Performance Trends */}
                 <div className="mt-8">
                     <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
-                        <h2 className="text-xl font-semibold mb-4">Recent Matches</h2>
-                        <div className="text-center py-12 text-[var(--text-secondary)]">
-                            <p className="mb-2">No matches found</p>
-                            <p className="text-sm">Connect your Steam account to see your match history.</p>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-semibold">Performance Trends</h2>
+                            <p className="text-xs text-[var(--text-muted)]">Last 30 Days Breakdown</p>
                         </div>
+                        <PerformanceChart data={history || []} />
                     </div>
                 </div>
 

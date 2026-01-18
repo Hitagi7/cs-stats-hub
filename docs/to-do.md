@@ -71,8 +71,8 @@
 ### Dashboard (`/dashboard`)
 - [x] Dashboard layout with sidebar
 - [x] Reusable sidebar component
-- [ ] Performance trend charts
-- [ ] Recent matches list (connected)
+- [x] Performance trend charts (with metric selector)
+- [ ] Recent Matches (Replaced by Performance Trends)
 - [x] Quick stats overview (connected)
 - [x] Favorites widget (connected)
 
@@ -81,7 +81,9 @@
 - [x] Stats page layout
 - [x] Stats overview cards
 - [x] Connect Steam CTA
-- [ ] Performance chart (needs data)
+- [x] Stats overview cards
+- [x] Connect Steam CTA
+- [x] Performance chart (History & Radar)
 
 ### Favorites (`/dashboard/favorites`)
 - [x] Favorites page layout

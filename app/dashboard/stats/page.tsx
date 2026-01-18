@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Sidebar from "@/app/components/sidebar";
-import { getUserStats } from "@/lib/stats";
+import { getUserStats, getStatsHistory } from "@/lib/stats";
 import ConnectSteamForm from "./connect-steam-form";
-
+import PerformanceChart from "./performance-chart";
+import SkillRadarChart from "./skill-radar-chart";
 import DisconnectSteamButton from "./disconnect-button";
 
 export default async function StatsPage() {
@@ -14,7 +15,10 @@ export default async function StatsPage() {
         redirect("/login");
     }
 
-    const stats = await getUserStats(user.id);
+    const [stats, history] = await Promise.all([
+        getUserStats(user.id),
+        getStatsHistory(user.id)
+    ]);
 
     return (
         <div className="min-h-screen flex">
@@ -41,9 +45,9 @@ export default async function StatsPage() {
                         {/* Stats Overview */}
                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                             {[
-                                { label: "K/D Ratio", value: stats.kd_ratio ?? "--" },
-                                { label: "Win Rate", value: stats.win_rate ? `${stats.win_rate}%` : "--" },
-                                { label: "Headshot %", value: stats.headshot_percentage ? `${stats.headshot_percentage}%` : "--" },
+                                { label: "K/D Ratio", value: stats.kd_ratio?.toFixed(2) ?? "--" },
+                                { label: "Win Rate", value: stats.win_rate ? `${stats.win_rate.toFixed(1)}%` : "--" },
+                                { label: "Headshot %", value: stats.headshot_percentage ? `${stats.headshot_percentage.toFixed(1)}%` : "--" },
                                 { label: "Total Matches", value: stats.matches_played },
                             ].map((stat, index) => (
                                 <div key={index} className="feature-card">
@@ -51,6 +55,24 @@ export default async function StatsPage() {
                                     <p className="text-3xl font-bold text-white">{stat.value}</p>
                                 </div>
                             ))}
+                        </div>
+
+                        {/* Charts Section */}
+                        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+                            {/* Performance Chart */}
+                            <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-xl font-semibold">Performance Trends</h2>
+                                    <p className="text-xs text-[var(--text-muted)]">Last 30 Days</p>
+                                </div>
+                                <PerformanceChart data={history || []} />
+                            </div>
+
+                            {/* Skill Radar */}
+                            <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
+                                <h2 className="text-xl font-semibold mb-6">Skill Analysis</h2>
+                                <SkillRadarChart stats={stats} />
+                            </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -65,14 +87,6 @@ export default async function StatsPage() {
                                     <p className="text-2xl font-bold text-white">{stat.value}</p>
                                 </div>
                             ))}
-                        </div>
-
-                        {/* Performance Chart Placeholder */}
-                        <div className="mt-8 glass rounded-2xl p-6 border border-[var(--cs2-border)]">
-                            <h2 className="text-xl font-semibold mb-4">Performance Over Time</h2>
-                            <div className="h-64 flex items-center justify-center text-[var(--text-secondary)]">
-                                <p>Detailed charts coming soon</p>
-                            </div>
                         </div>
                     </>
                 )}

@@ -52,6 +52,10 @@ export async function getUserStats(userId: string): Promise<UserStats | null> {
     }
 
     if (isCacheValid) {
+        // success - try to save snapshot (non-blocking)
+        saveStatsSnapshot(cachedStats as UserStats).catch(err =>
+            console.error("Failed to save snapshot from cache:", err)
+        );
         return cachedStats as UserStats;
     }
 
@@ -92,6 +96,12 @@ export async function getUserStats(userId: string): Promise<UserStats | null> {
 
     if (upsertError) {
         console.error("Failed to cache stats:", JSON.stringify(upsertError, null, 2));
+    } else {
+        // success - try to save snapshot
+        // We do this asynchronously without awaiting to not block the UI
+        saveStatsSnapshot(statsPayload as UserStats).catch(err =>
+            console.error("Failed to save snapshot:", err)
+        );
     }
 
     return statsPayload as UserStats;
@@ -205,4 +215,70 @@ export async function getFavoritesWithStats(userId: string): Promise<EnrichedFav
         ...f,
         stats: statsMap.get(f.steam_id) || null
     }));
+}
+
+export interface StatsHistoryPoint {
+    recorded_at: string;
+    kd_ratio: number | null;
+    win_rate: number | null;
+    headshot_percentage: number | null;
+    matches_played: number;
+}
+
+export async function saveStatsSnapshot(stats: UserStats) {
+    const supabase = await createClient();
+
+    // Check for existing snapshot in last 24 hours
+    const { data: latest } = await supabase
+        .from("player_stats_history")
+        .select("recorded_at")
+        .eq("steam_id", stats.steam_id)
+        .order("recorded_at", { ascending: false })
+        .limit(1)
+        .single();
+
+    const now = new Date();
+    if (latest) {
+        const lastRecorded = new Date(latest.recorded_at);
+        const hoursDiff = (now.getTime() - lastRecorded.getTime()) / (1000 * 60 * 60);
+        if (hoursDiff < 24) {
+            return; // Too soon for new snapshot
+        }
+    }
+
+    // Create new snapshot
+    await supabase.from("player_stats_history").insert({
+        steam_id: stats.steam_id,
+        kd_ratio: stats.kd_ratio,
+        win_rate: stats.win_rate,
+        headshot_percentage: stats.headshot_percentage,
+        matches_played: stats.matches_played,
+        total_kills: stats.total_kills,
+        total_deaths: stats.total_deaths,
+        recorded_at: now.toISOString()
+    });
+}
+
+export async function getStatsHistory(userId: string): Promise<StatsHistoryPoint[]> {
+    const supabase = await createClient();
+
+    // Get steam_id first
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("steam_id")
+        .eq("id", userId)
+        .single();
+
+    if (!profile?.steam_id) {
+        return [];
+    }
+
+    const { data: history } = await supabase
+        .from("player_stats_history")
+        .select("recorded_at, kd_ratio, win_rate, headshot_percentage, matches_played")
+        .eq("steam_id", profile.steam_id)
+        .order("recorded_at", { ascending: true })
+        .limit(30); // Last 30 points
+
+    return (history || []) as StatsHistoryPoint[];
 }
