@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import Sidebar from "@/app/components/sidebar";
+import { useRouter } from "next/navigation";
 
 interface Favorite {
     id: string;
     steam_id: string;
     nickname: string | null;
+    avatar_url: string | null;
     created_at: string;
 }
 
@@ -28,6 +30,7 @@ export default function FavoritesPage({ user }: { user: User }) {
     const [favorites, setFavorites] = useState<Favorite[]>([]);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
+    const router = useRouter();
 
     useEffect(() => {
         fetchFavorites();
@@ -100,36 +103,51 @@ export default function FavoritesPage({ user }: { user: User }) {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {favorites.map((favorite) => (
-                            <div key={favorite.id} className="feature-card group">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-[var(--cs2-orange)] font-bold">
+                            <div
+                                key={favorite.id}
+                                onClick={() => router.push(`/player/${favorite.steam_id}`)}
+                                className="feature-card group cursor-pointer relative hover:border-[var(--cs2-orange)] transition-colors"
+                            >
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        removeFavorite(favorite.steam_id);
+                                    }}
+                                    className="absolute top-4 right-4 p-2 rounded-lg text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100 z-10"
+                                    title="Remove from favorites"
+                                >
+                                    <TrashIcon />
+                                </button>
+
+                                <div className="flex items-center gap-4 mb-4">
+                                    {favorite.avatar_url ? (
+                                        <img
+                                            src={favorite.avatar_url}
+                                            alt={favorite.nickname || "Player"}
+                                            className="w-16 h-16 rounded-full border-2 border-[var(--cs2-orange)] object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-[var(--cs2-orange)] font-bold text-xl border-2 border-[var(--cs2-border)]">
                                             {favorite.nickname?.charAt(0).toUpperCase() || "P"}
                                         </div>
-                                        <div>
-                                            <p className="font-semibold text-white">
-                                                {favorite.nickname || `Player`}
-                                            </p>
-                                            <p className="text-sm text-[var(--text-muted)]">
-                                                {favorite.steam_id}
-                                            </p>
-                                        </div>
+                                    )}
+                                    <div>
+                                        <h3 className="font-bold text-white text-lg group-hover:text-[var(--cs2-orange)] transition-colors">
+                                            {favorite.nickname || `Player`}
+                                        </h3>
+                                        <p className="text-sm text-[var(--text-muted)]">
+                                            {favorite.steam_id}
+                                        </p>
                                     </div>
-                                    <button
-                                        onClick={() => removeFavorite(favorite.steam_id)}
-                                        className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
-                                        title="Remove from favorites"
-                                    >
-                                        <TrashIcon />
-                                    </button>
                                 </div>
-                                <div className="mt-4 pt-4 border-t border-[var(--cs2-border)]">
-                                    <a
-                                        href={`/player/${favorite.steam_id}`}
-                                        className="text-sm text-[var(--cs2-orange)] hover:underline"
-                                    >
-                                        View Stats →
-                                    </a>
+
+                                <div className="flex justify-end">
+                                    <span className="text-xs font-medium text-[var(--cs2-orange)] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                        View Stats
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </span>
                                 </div>
                             </div>
                         ))}

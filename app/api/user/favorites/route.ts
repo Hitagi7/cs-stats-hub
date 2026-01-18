@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { steam_id, nickname } = body;
+        const { steam_id, nickname, avatar_url } = body;
 
         if (!steam_id) {
             return NextResponse.json(
@@ -67,6 +67,7 @@ export async function POST(request: Request) {
                 user_id: user.id,
                 steam_id,
                 nickname,
+                avatar_url,
             })
             .select()
             .single();

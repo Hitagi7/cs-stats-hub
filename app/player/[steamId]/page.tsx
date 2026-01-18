@@ -82,14 +82,22 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 {/* Player Header */}
                 <div className="glass rounded-2xl p-8 border border-[var(--cs2-border)] mb-8">
                     <div className="flex items-center gap-6">
-                        <div className="w-24 h-24 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-4xl font-bold text-[var(--cs2-orange)]">
-                            {player?.username?.charAt(0).toUpperCase() || "P"}
-                        </div>
+                        {player?.avatar_url ? (
+                            <img
+                                src={player.avatar_url}
+                                alt={player.username || "Player"}
+                                className="w-24 h-24 rounded-full border-2 border-[var(--cs2-orange)] shadow-lg"
+                            />
+                        ) : (
+                            <div className="w-24 h-24 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-4xl font-bold text-[var(--cs2-orange)] border-2 border-[var(--cs2-border)]">
+                                {player?.username?.charAt(0).toUpperCase() || "P"}
+                            </div>
+                        )}
                         <div>
                             <h1 className="text-3xl font-bold text-white mb-2">
                                 {player?.username || `Player_${steamId.slice(-4)}`}
                             </h1>
-                            <p className="text-[var(--text-muted)]">Steam ID: {steamId}</p>
+                            <p className="text-[var(--text-muted)] text-sm">Steam ID: {steamId}</p>
                             {player?.last_updated && (
                                 <p className="text-xs text-[var(--text-muted)] mt-1">
                                     Last updated: {new Date(player.last_updated).toLocaleDateString()}

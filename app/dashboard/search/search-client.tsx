@@ -9,6 +9,7 @@ import Sidebar from "@/app/components/sidebar";
 interface SearchResult {
     steam_id: string;
     username: string | null;
+    avatar_url: string | null;
     kd_ratio: number | null;
     win_rate: number | null;
     source: string;
@@ -72,6 +73,7 @@ export default function SearchClient({ user }: { user: User }) {
                 body: JSON.stringify({
                     steam_id: result.steam_id,
                     nickname: result.username,
+                    avatar_url: result.avatar_url,
                 }),
             });
 
@@ -131,25 +133,39 @@ export default function SearchClient({ user }: { user: User }) {
 
                 {/* Search Result */}
                 {result && (
-                    <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
+                    <div
+                        onClick={() => router.push(`/player/${result.steam_id}`)}
+                        className="glass rounded-2xl p-6 border border-[var(--cs2-border)] group cursor-pointer hover:border-[var(--cs2-orange)] transition-colors"
+                    >
                         <div className="flex items-start justify-between mb-6">
                             <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-2xl font-bold text-[var(--cs2-orange)]">
-                                    {result.username?.charAt(0).toUpperCase() || "P"}
-                                </div>
+                                {result.avatar_url ? (
+                                    <img
+                                        src={result.avatar_url}
+                                        alt={result.username || "Player"}
+                                        className="w-16 h-16 rounded-full border-2 border-[var(--cs2-orange)]"
+                                    />
+                                ) : (
+                                    <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-2xl font-bold text-[var(--cs2-orange)]">
+                                        {result.username?.charAt(0).toUpperCase() || "P"}
+                                    </div>
+                                )}
                                 <div>
                                     <h2 className="text-2xl font-bold text-white">
                                         {result.username || "Unknown Player"}
                                     </h2>
-                                    <p className="text-[var(--text-muted)]">{result.steam_id}</p>
+                                    <p className="text-[var(--text-muted)] text-sm">{result.steam_id}</p>
                                 </div>
                             </div>
                             <button
-                                onClick={addToFavorites}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    addToFavorites();
+                                }}
                                 disabled={addingFavorite || favoriteAdded}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${favoriteAdded
-                                        ? "bg-green-500/20 text-green-400"
-                                        : "bg-[var(--cs2-surface)] text-[var(--text-secondary)] hover:text-[var(--cs2-orange)]"
+                                    ? "bg-green-500/20 text-green-400"
+                                    : "bg-[var(--cs2-surface)] text-[var(--text-secondary)] hover:text-[var(--cs2-orange)]"
                                     }`}
                             >
                                 <StarIcon />
@@ -177,13 +193,13 @@ export default function SearchClient({ user }: { user: User }) {
                             </div>
                         )}
 
-                        <div className="mt-6 pt-6 border-t border-[var(--cs2-border)]">
-                            <button
-                                onClick={() => router.push(`/player/${result.steam_id}`)}
-                                className="btn-primary"
-                            >
-                                View Full Profile →
-                            </button>
+                        <div className="flex justify-end mt-6 pt-6 border-t border-[var(--cs2-border)]">
+                            <span className="text-sm font-medium text-[var(--cs2-orange)] flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                                View Full Profile
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </span>
                         </div>
                     </div>
                 )}

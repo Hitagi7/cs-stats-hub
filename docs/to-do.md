@@ -93,6 +93,7 @@
 - [x] Search form
 - [x] Results display
 - [x] Add to favorites from results
+- [ ] Add error handling for invalid Steam IDs (Private accounts also)
 
 ### AI Chat (`/dashboard/ai`)
 - [x] Chat interface UI
