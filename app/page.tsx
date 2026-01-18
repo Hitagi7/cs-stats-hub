@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AuthButtons from "@/app/components/auth-buttons";
 
 // SVG Icon Components
 const ChartIcon = () => (
@@ -121,10 +122,7 @@ export default function Home() {
               AI Insights
             </a>
           </div>
-          <div className="flex items-center gap-4">
-            <a href="/login" className="btn-secondary hidden sm:block">Sign In</a>
-            <a href="/signup" className="btn-primary">Get Started</a>
-          </div>
+          <AuthButtons />
         </nav>
       </header>
 
