@@ -6,7 +6,7 @@
 - [x] Tailwind CSS
 - [x] Supabase client setup
 - [x] Google Gemini API integration
-- [ ] Vercel deployment
+- [x] Vercel deployment (Live at https://cs-stats-hub.vercel.app/)
 
 ---
 
@@ -120,7 +120,7 @@
 - [x] AI-powered insights (needs Gemini)
 - [x] Compare stats with other players
 - [x] Save favorite players
-- [ ] Performance trend visualization
+- [x] Performance trend visualization
 
 ---
 
@@ -130,7 +130,7 @@
 - [x] Loading states/skeletons
 - [x] Error handling
 - [ ] 404 page
-- [ ] Performance optimization
+- [x] Performance optimization (Middleware proxy migrated)
 
 ---
 
@@ -138,16 +138,16 @@
 
 | Category | Completed | Total | Progress |
 |----------|-----------|-------|----------|
-| Tech Stack Setup | 5 | 6 | 83% |
+| Tech Stack Setup | 6 | 6 | 100% |
 | Landing Page | 11 | 11 | 100% |
 | Authentication | 4 | 6 | 67% |
 | Database | 5 | 6 | 83% |
 | API Routes | 6 | 6 | 100% |
 | Steam API Integration | 7 | 7 | 100% |
 | Pages & Features | 23 | 26 | 88% |
-| Key Features | 5 | 6 | 83% |
-| Polish & Optimization | 3 | 6 | 50% |
-| **Total** | **69** | **80** | **86%** |
+| Key Features | 6 | 6 | 100% |
+| Polish & Optimization | 4 | 6 | 67% |
+| **Total** | **72** | **80** | **90%** |
 
 ```
 Overall Progress: ██████████████████████████░░░░ 86%
