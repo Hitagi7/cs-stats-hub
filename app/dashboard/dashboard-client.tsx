@@ -69,14 +69,15 @@ const LogoutIcon = () => (
     </svg>
 );
 
-import { UserStats } from "@/lib/stats";
+import { UserStats, EnrichedFavorite } from "@/lib/stats";
 
 interface DashboardClientProps {
     user: User;
     stats: UserStats | null;
+    favorites?: EnrichedFavorite[]; // Made optional to be safe, though usually provided
 }
 
-export default function DashboardClient({ user, stats }: DashboardClientProps) {
+export default function DashboardClient({ user, stats, favorites }: DashboardClientProps) {
     const supabase = createClient();
     const router = useRouter();
     const pathname = usePathname();
@@ -232,14 +233,58 @@ export default function DashboardClient({ user, stats }: DashboardClientProps) {
                     </div>
                 </div>
 
-                {/* Favorites Placeholder */}
+                {/* Favorites Widget */}
                 <div className="mt-8">
                     <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
-                        <h2 className="text-xl font-semibold mb-4">Favorite Players</h2>
-                        <div className="text-center py-12 text-[var(--text-secondary)]">
-                            <p className="mb-2">No favorite players yet</p>
-                            <p className="text-sm">Search for players and add them to your favorites.</p>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-semibold">Favorite Players</h2>
+                            <Link href="/dashboard/favorites" className="text-sm text-[var(--cs2-orange)] hover:text-white transition-colors">
+                                View All
+                            </Link>
                         </div>
+
+                        {favorites && favorites.length > 0 ? (
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {favorites.slice(0, 3).map((fav) => (
+                                    <Link
+                                        key={fav.steam_id}
+                                        href={`/player/${fav.steam_id}`}
+                                        className="block group"
+                                    >
+                                        <div className="bg-[var(--cs2-surface)] border border-[var(--cs2-border)] rounded-xl p-4 hover:border-[var(--cs2-orange)] transition-colors relative overflow-hidden">
+                                            <div className="flex items-center gap-4">
+                                                {fav.avatar_url ? (
+                                                    <img
+                                                        src={fav.avatar_url}
+                                                        alt={fav.nickname || fav.steam_id}
+                                                        className="w-12 h-12 rounded-full border border-[var(--cs2-border)] group-hover:border-[var(--cs2-orange)] transition-colors"
+                                                    />
+                                                ) : (
+                                                    <div className="w-12 h-12 rounded-full bg-[#1a1b26] flex items-center justify-center text-[var(--cs2-orange)] font-bold border border-[var(--cs2-border)]">
+                                                        {(fav.nickname || fav.steam_id).charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-semibold text-white truncate group-hover:text-[var(--cs2-orange)] transition-colors">
+                                                        {fav.nickname || `Player_${fav.steam_id.slice(-4)}`}
+                                                    </h3>
+                                                    <p className="text-xs text-[var(--text-muted)] truncate">
+                                                        K/D: <span className="text-white">{fav.stats?.kd_ratio?.toFixed(2) || "--"}</span> • Win: <span className="text-white">{fav.stats?.win_rate ? `${fav.stats.win_rate.toFixed(0)}%` : "--"}</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12 text-[var(--text-secondary)]">
+                                <p className="mb-2">No favorite players yet</p>
+                                <Link href="/dashboard/search" className="text-sm text-[var(--cs2-orange)] hover:underline">
+                                    Search for players to add
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </main>

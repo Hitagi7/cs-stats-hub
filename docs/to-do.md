@@ -74,7 +74,8 @@
 - [ ] Performance trend charts
 - [ ] Recent matches list (connected)
 - [x] Quick stats overview (connected)
-- [ ] Favorites widget (connected)
+- [x] Favorites widget (connected)
+
 
 ### My Stats (`/dashboard/stats`)
 - [x] Stats page layout
