@@ -100,7 +100,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
                     <div className="feature-card text-center">
                         <div className="flex justify-center mb-3"><ChartIcon /></div>
                         <p className="text-3xl font-bold text-white mb-1">
@@ -127,7 +127,18 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                         <p className="text-3xl font-bold text-white mb-1">
                             {player?.matches_played || "--"}
                         </p>
-                        <p className="text-[var(--text-secondary)] text-sm">Matches Played</p>
+                        <p className="text-[var(--text-secondary)] text-sm">Matches</p>
+                    </div>
+                    <div className="feature-card text-center">
+                        <div className="flex justify-center mb-3">
+                            <svg className="w-8 h-8 text-[var(--cs2-orange)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p className="text-3xl font-bold text-white mb-1">
+                            {player?.hours_played ? `${player.hours_played}h` : "--"}
+                        </p>
+                        <p className="text-[var(--text-secondary)] text-sm">Hours Played</p>
                     </div>
                 </div>
 
@@ -194,10 +205,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                                             <td className="py-3">
                                                 <span
                                                     className={`px-2 py-1 rounded text-xs font-medium ${match.result === "win"
-                                                            ? "bg-green-500/20 text-green-400"
-                                                            : match.result === "loss"
-                                                                ? "bg-red-500/20 text-red-400"
-                                                                : "bg-yellow-500/20 text-yellow-400"
+                                                        ? "bg-green-500/20 text-green-400"
+                                                        : match.result === "loss"
+                                                            ? "bg-red-500/20 text-red-400"
+                                                            : "bg-yellow-500/20 text-yellow-400"
                                                         }`}
                                                 >
                                                     {match.result?.toUpperCase() || "N/A"}

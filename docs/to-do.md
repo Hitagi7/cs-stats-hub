@@ -56,10 +56,13 @@
 ---
 
 ## Steam API Integration
-- [ ] Steam Web API authentication
-- [ ] Fetch player profile
-- [ ] Fetch CS2 stats (K/D, win rate, etc.)
-- [ ] Parse and transform data
+- [x] Steam Web API library (`lib/steam/api.ts`)
+- [x] Fetch player profile
+- [x] Fetch CS2 stats (K/D, win rate, etc.)
+- [x] Parse and transform data
+- [x] Vanity URL resolution
+- [x] Stats caching with 1-hour TTL
+- [ ] Get Steam API key (user action required)
 
 ---
 
@@ -136,12 +139,12 @@
 | Authentication | 4 | 6 | 67% |
 | Database | 5 | 6 | 83% |
 | API Routes | 5 | 6 | 83% |
-| Steam API Integration | 0 | 4 | 0% |
+| Steam API Integration | 6 | 7 | 86% |
 | Pages & Features | 20 | 26 | 77% |
 | Key Features | 2 | 6 | 33% |
 | Polish & Optimization | 2 | 6 | 33% |
-| **Total** | **53** | **77** | **69%** |
+| **Total** | **59** | **80** | **74%** |
 
 ```
-Overall Progress: █████████████████████░░░░░░░░░ 69%
+Overall Progress: ██████████████████████░░░░░░░░ 74%
 ```
