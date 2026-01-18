@@ -67,33 +67,52 @@
 
 ### Dashboard (`/dashboard`)
 - [x] Dashboard layout with sidebar
+- [x] Reusable sidebar component
 - [ ] Performance trend charts
-- [ ] Recent matches list
-- [ ] Quick stats overview (connected to API)
-- [ ] Favorites widget (connected to API)
+- [ ] Recent matches list (connected)
+- [ ] Quick stats overview (connected)
+- [ ] Favorites widget (connected)
+
+### My Stats (`/dashboard/stats`)
+- [x] Stats page layout
+- [x] Stats overview cards
+- [x] Connect Steam CTA
+- [ ] Performance chart (needs data)
+
+### Favorites (`/dashboard/favorites`)
+- [x] Favorites page layout
+- [x] List favorite players
+- [x] Remove from favorites
+- [x] Empty state
+
+### Search Player (`/dashboard/search`)
+- [x] Search page layout
+- [x] Search form
+- [x] Results display
+- [x] Add to favorites from results
+
+### AI Chat (`/dashboard/ai`)
+- [x] Chat interface UI
+- [x] Message history
+- [x] Example prompts
+- [x] Typing indicator
+- [ ] Gemini API integration
 
 ### Player Stats (`/player/[steamId]`)
-- [ ] Player profile header
-- [ ] Stats breakdown (K/D, win rate, headshots)
-- [ ] Weapon usage stats
-- [ ] Match history table
-- [ ] Add to favorites button
-
-### AI Chat (`/ai/chat`)
-- [ ] Chat interface UI
-- [ ] Message history
-- [ ] Gemini API integration
-- [ ] Example prompts
-- [ ] Context-aware responses
+- [x] Player profile header
+- [x] Stats breakdown (K/D, win rate, headshots)
+- [x] Combat statistics panel
+- [x] Match statistics panel
+- [x] Match history table
 
 ---
 
 ## Key Features
-- [ ] Search players by Steam ID
+- [x] Search players by Steam ID
 - [ ] Real-time stat updates
-- [ ] AI-powered insights
+- [ ] AI-powered insights (needs Gemini)
 - [ ] Compare stats with other players
-- [ ] Save favorite players
+- [x] Save favorite players
 - [ ] Performance trend visualization
 
 ---
@@ -101,7 +120,7 @@
 ## Polish & Optimization
 - [x] SEO meta tags
 - [ ] Open Graph images
-- [ ] Loading states/skeletons
+- [x] Loading states/skeletons
 - [ ] Error handling
 - [ ] 404 page
 - [ ] Performance optimization
@@ -118,11 +137,11 @@
 | Database | 5 | 6 | 83% |
 | API Routes | 5 | 6 | 83% |
 | Steam API Integration | 0 | 4 | 0% |
-| Pages & Features | 1 | 15 | 7% |
-| Key Features | 0 | 6 | 0% |
-| Polish & Optimization | 1 | 6 | 17% |
-| **Total** | **31** | **66** | **47%** |
+| Pages & Features | 20 | 26 | 77% |
+| Key Features | 2 | 6 | 33% |
+| Polish & Optimization | 2 | 6 | 33% |
+| **Total** | **53** | **77** | **69%** |
 
 ```
-Overall Progress: ██████████████░░░░░░░░░░░░░░░░ 47%
+Overall Progress: █████████████████████░░░░░░░░░ 69%
 ```
