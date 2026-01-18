@@ -21,6 +21,7 @@
 - [x] Dark theme & CS2 color palette
 - [x] Responsive design
 - [x] Micro-animations (fade-in, hover effects)
+- [x] Auth-aware navigation buttons
 
 ---
 
@@ -35,18 +36,22 @@
 ---
 
 ## Database (Supabase)
-- [ ] Create `player_stats` table
-- [ ] Create `user_favorites` table
-- [ ] Create `match_history` table
-- [ ] Row Level Security (RLS) policies
+- [x] Create `player_stats` table
+- [x] Create `user_favorites` table
+- [x] Create `match_history` table
+- [x] Row Level Security (RLS) policies
+- [x] TypeScript types generated
 - [ ] Realtime subscriptions setup
 
 ---
 
 ## API Routes
-- [ ] `GET /api/stats/[steamId]` - Fetch player stats from Steam
+- [x] `GET /api/stats/[steamId]` - Fetch player stats
+- [x] `GET /api/user/favorites` - Get user favorites
+- [x] `POST /api/user/favorites` - Add favorite
+- [x] `DELETE /api/user/favorites` - Remove favorite
+- [x] `GET /api/user/stats` - Get current user stats
 - [ ] `POST /api/gemini` - AI chat endpoint
-- [ ] `GET /api/user/stats` - Get current user stats
 
 ---
 
@@ -61,11 +66,11 @@
 ## Pages & Features
 
 ### Dashboard (`/dashboard`)
-- [x] Dashboard layout (placeholder)
+- [x] Dashboard layout with sidebar
 - [ ] Performance trend charts
 - [ ] Recent matches list
-- [ ] Quick stats overview
-- [ ] Favorites widget
+- [ ] Quick stats overview (connected to API)
+- [ ] Favorites widget (connected to API)
 
 ### Player Stats (`/player/[steamId]`)
 - [ ] Player profile header
@@ -107,17 +112,17 @@
 
 | Category | Completed | Total | Progress |
 |----------|-----------|-------|----------|
-| Tech Stack Setup | 4 | 7 | 57% |
-| Landing Page | 10 | 10 | 100% |
+| Tech Stack Setup | 4 | 6 | 67% |
+| Landing Page | 11 | 11 | 100% |
 | Authentication | 4 | 6 | 67% |
-| Database | 0 | 5 | 0% |
-| API Routes | 0 | 3 | 0% |
+| Database | 5 | 6 | 83% |
+| API Routes | 5 | 6 | 83% |
 | Steam API Integration | 0 | 4 | 0% |
 | Pages & Features | 1 | 15 | 7% |
 | Key Features | 0 | 6 | 0% |
 | Polish & Optimization | 1 | 6 | 17% |
-| **Total** | **20** | **62** | **32%** |
+| **Total** | **31** | **66** | **47%** |
 
 ```
-Overall Progress: ██████████░░░░░░░░░░░░░░░░░░░░ 32%
+Overall Progress: ██████████████░░░░░░░░░░░░░░░░ 47%
 ```
