@@ -69,29 +69,32 @@ const LogoutIcon = () => (
     </svg>
 );
 
+import { UserStats } from "@/lib/stats";
+
 interface DashboardClientProps {
     user: User;
+    stats: UserStats | null;
 }
 
-const statsData = [
-    { label: "K/D Ratio", value: "--", icon: <ChartIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
-    { label: "Win Rate", value: "--", icon: <TargetIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
-    { label: "Matches", value: "--", icon: <SwordsIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
-    { label: "Headshots", value: "--", icon: <CrosshairIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
-];
-
-const navItems = [
-    { label: "Dashboard", href: "/dashboard", icon: <HomeIcon /> },
-    { label: "My Stats", href: "/dashboard/stats", icon: <StatsIcon /> },
-    { label: "Favorites", href: "/dashboard/favorites", icon: <StarIcon /> },
-    { label: "Search Player", href: "/dashboard/search", icon: <SearchIcon /> },
-    { label: "AI Insights", href: "/dashboard/ai", icon: <AIIcon /> },
-];
-
-export default function DashboardClient({ user }: DashboardClientProps) {
+export default function DashboardClient({ user, stats }: DashboardClientProps) {
     const supabase = createClient();
     const router = useRouter();
     const pathname = usePathname();
+
+    const statsData = [
+        { label: "K/D Ratio", value: stats?.kd_ratio?.toFixed(2) || "--", icon: <ChartIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+        { label: "Win Rate", value: stats?.win_rate ? `${stats.win_rate}%` : "--", icon: <TargetIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+        { label: "Matches", value: stats?.matches_played || "--", icon: <SwordsIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+        { label: "Headshots", value: stats?.headshot_percentage ? `${stats.headshot_percentage}%` : "--", icon: <CrosshairIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+    ];
+
+    const navItems = [
+        { label: "Dashboard", href: "/dashboard", icon: <HomeIcon /> },
+        { label: "My Stats", href: "/dashboard/stats", icon: <StatsIcon /> },
+        { label: "Favorites", href: "/dashboard/favorites", icon: <StarIcon /> },
+        { label: "Search Player", href: "/dashboard/search", icon: <SearchIcon /> },
+        { label: "AI Insights", href: "/dashboard/ai", icon: <AIIcon /> },
+    ];
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -120,8 +123,8 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                                     <Link
                                         href={item.href}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
-                                                ? "bg-[var(--cs2-orange)] text-white"
-                                                : "text-[var(--text-secondary)] hover:bg-[var(--cs2-surface)] hover:text-white"
+                                            ? "bg-[var(--cs2-orange)] text-white"
+                                            : "text-[var(--text-secondary)] hover:bg-[var(--cs2-surface)] hover:text-white"
                                             }`}
                                     >
                                         {item.icon}

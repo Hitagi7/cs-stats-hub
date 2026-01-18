@@ -6,7 +6,7 @@ import { User } from "@supabase/supabase-js";
 import Sidebar from "@/app/components/sidebar";
 import { useRouter } from "next/navigation";
 
-interface Favorite {
+export interface Favorite {
     id: string;
     steam_id: string;
     nickname: string | null;

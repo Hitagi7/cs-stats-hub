@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AIClient from "./ai-client";
+import { getUserStats, getFavoritesWithStats } from "@/lib/stats";
 
 export default async function AIPage() {
     const supabase = await createClient();
@@ -10,5 +11,8 @@ export default async function AIPage() {
         redirect("/login");
     }
 
-    return <AIClient user={user} />;
+    const stats = await getUserStats(user.id);
+    const favorites = await getFavoritesWithStats(user.id);
+
+    return <AIClient user={user} stats={stats} favorites={favorites} />;
 }

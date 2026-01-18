@@ -250,6 +250,14 @@ export async function getFullPlayerData(steamIdOrUrl: string) {
         };
     }
 
+    // Check visibility state (3 = public)
+    if (profile.communityvisibilitystate !== 3) {
+        return {
+            success: false,
+            error: "This Steam account is private. Please set your Game Details to Public in Steam Privacy Settings.",
+        };
+    }
+
     const stats = rawStats ? parseCS2Stats(rawStats) : null;
 
     return {
