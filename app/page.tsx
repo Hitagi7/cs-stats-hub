@@ -332,7 +332,7 @@ export default function Home() {
 
           <div className="border-t border-[var(--cs2-border)] mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-[var(--text-muted)] text-sm">
-              © 2026 CS2 Stats Hub. All rights reserved.
+              © 2026 <a href="https://github.com/Hitagi7" target="_blank" rel="noopener noreferrer" className="text-[var(--cs2-orange)] hover:text-white transition-colors">Hitagi7</a>. All rights reserved.
             </p>
             <p className="text-[var(--text-muted)] text-sm">
               Powered by <span className="text-[var(--text-secondary)]">Steam API</span> & <span className="text-[var(--ai-cyan)]">Google Gemini</span>
