@@ -57,10 +57,12 @@ export default function DashboardClient({ user, stats, favorites, history }: Das
             {/* Welcome Section */}
             <div className="mb-8">
                 <h1 className="text-3xl font-bold mb-2">
-                    Welcome back, <span className="text-gradient-orange">{user.email?.split("@")[0]}</span>
+                    Welcome back, <span className="text-gradient-orange">{liveStats?.username || user.email?.split("@")[0]}</span>
                 </h1>
                 <p className="text-[var(--text-secondary)]">
-                    Track your CS2 performance and get AI-powered insights.
+                    {liveStats?.username
+                        ? "Track your CS2 performance and get AI-powered insights."
+                        : "Connect your Steam account in Settings to see your stats."}
                 </p>
             </div>
 

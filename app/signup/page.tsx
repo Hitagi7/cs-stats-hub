@@ -31,7 +31,7 @@ export default function SignUpPage() {
             return;
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -40,7 +40,18 @@ export default function SignUpPage() {
         });
 
         if (error) {
-            setError(error.message);
+            // Check for user already exists error
+            if (error.message.toLowerCase().includes("already registered") ||
+                error.message.toLowerCase().includes("already been registered") ||
+                error.message.toLowerCase().includes("user already exists")) {
+                setError("This email is already registered. Please log in instead.");
+            } else {
+                setError(error.message);
+            }
+            setLoading(false);
+        } else if (data.user && !data.user.identities?.length) {
+            // User exists but no new identity was created (duplicate signup attempt)
+            setError("This email is already registered. Please log in instead.");
             setLoading(false);
         } else {
             setSuccess(true);

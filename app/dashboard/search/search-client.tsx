@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface SearchResult {
     steam_id: string;
@@ -13,6 +13,16 @@ interface SearchResult {
     win_rate: number | null;
     source: string;
 }
+
+interface RecentSearch {
+    steam_id: string;
+    username: string | null;
+    avatar_url: string | null;
+    timestamp: number;
+}
+
+const RECENT_SEARCHES_KEY = "cs2_recent_searches";
+const MAX_RECENT_SEARCHES = 5;
 
 const SearchIconLarge = () => (
     <svg className="w-12 h-12 text-[var(--cs2-orange)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,19 +36,75 @@ const StarIcon = () => (
     </svg>
 );
 
+const ClockIcon = () => (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
+// Helper functions for localStorage
+function getRecentSearches(): RecentSearch[] {
+    if (typeof window === "undefined") return [];
+    try {
+        const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
+        return stored ? JSON.parse(stored) : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveRecentSearch(result: SearchResult) {
+    if (typeof window === "undefined") return;
+    try {
+        const searches = getRecentSearches();
+        // Remove duplicate if exists
+        const filtered = searches.filter(s => s.steam_id !== result.steam_id);
+        // Add new search at the beginning
+        const updated: RecentSearch[] = [
+            {
+                steam_id: result.steam_id,
+                username: result.username,
+                avatar_url: result.avatar_url,
+                timestamp: Date.now(),
+            },
+            ...filtered,
+        ].slice(0, MAX_RECENT_SEARCHES);
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+    } catch {
+        // Ignore storage errors
+    }
+}
+
 export default function SearchClient({ user }: { user: User }) {
-    const [query, setQuery] = useState("");
+    const searchParams = useSearchParams();
+    const initialQuery = searchParams.get("q") || "";
+
+    const [query, setQuery] = useState(initialQuery);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<SearchResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [addingFavorite, setAddingFavorite] = useState(false);
     const [favoriteAdded, setFavoriteAdded] = useState(false);
+    const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+    const [showRecent, setShowRecent] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!query.trim()) return;
+    // Load recent searches on mount
+    useEffect(() => {
+        setRecentSearches(getRecentSearches());
+    }, []);
+
+    // Auto-search if query param exists
+    useEffect(() => {
+        if (initialQuery && !result) {
+            performSearch(initialQuery);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [initialQuery]);
+
+    const performSearch = async (searchQuery: string) => {
+        if (!searchQuery.trim()) return;
 
         setLoading(true);
         setError(null);
@@ -46,11 +112,14 @@ export default function SearchClient({ user }: { user: User }) {
         setFavoriteAdded(false);
 
         try {
-            const res = await fetch(`/api/stats/${encodeURIComponent(query.trim())}`);
+            const res = await fetch(`/api/stats/${encodeURIComponent(searchQuery.trim())}`);
             const data = await res.json();
 
             if (data.success) {
                 setResult(data.data);
+                // Save to recent searches
+                saveRecentSearch(data.data);
+                setRecentSearches(getRecentSearches());
             } else {
                 setError(data.error || "Failed to fetch player stats");
             }
@@ -59,6 +128,22 @@ export default function SearchClient({ user }: { user: User }) {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!query.trim()) return;
+
+        // Update URL with search query for persistence
+        router.push(`/dashboard/search?q=${encodeURIComponent(query.trim())}`, { scroll: false });
+        await performSearch(query);
+    };
+
+    const handleRecentClick = (search: RecentSearch) => {
+        setQuery(search.steam_id);
+        setShowRecent(false);
+        router.push(`/dashboard/search?q=${encodeURIComponent(search.steam_id)}`, { scroll: false });
+        performSearch(search.steam_id);
     };
 
     const addToFavorites = async () => {
@@ -103,13 +188,55 @@ export default function SearchClient({ user }: { user: User }) {
             {/* Search Form */}
             <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)] mb-8">
                 <form onSubmit={handleSearch} className="flex gap-4">
-                    <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Enter Steam ID, Steam64 ID, or Profile URL"
-                        className="search-input flex-1"
-                    />
+                    <div className="relative flex-1">
+                        <input
+                            type="text"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            onFocus={() => setShowRecent(true)}
+                            onBlur={() => setTimeout(() => setShowRecent(false), 200)}
+                            placeholder="Enter Steam ID, Steam64 ID, or Profile URL"
+                            className="search-input w-full"
+                        />
+
+                        {/* Recent Searches Dropdown */}
+                        {showRecent && recentSearches.length > 0 && !result && (
+                            <div className="absolute top-full left-0 right-0 mt-2 glass rounded-xl border border-[var(--cs2-border)] overflow-hidden z-10">
+                                <div className="flex items-center gap-2 px-4 py-2 border-b border-[var(--cs2-border)]">
+                                    <ClockIcon />
+                                    <span className="text-sm text-[var(--text-muted)]">Recent Searches</span>
+                                </div>
+                                {recentSearches.map((search) => (
+                                    <button
+                                        key={search.steam_id}
+                                        type="button"
+                                        onClick={() => handleRecentClick(search)}
+                                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[var(--cs2-surface)] transition-colors text-left"
+                                    >
+                                        {search.avatar_url ? (
+                                            <img
+                                                src={search.avatar_url}
+                                                alt={search.username || "Player"}
+                                                className="w-8 h-8 rounded-full"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-sm font-bold text-[var(--cs2-orange)]">
+                                                {search.username?.charAt(0).toUpperCase() || "P"}
+                                            </div>
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium text-white truncate">
+                                                {search.username || "Unknown Player"}
+                                            </p>
+                                            <p className="text-xs text-[var(--text-muted)] truncate">
+                                                {search.steam_id}
+                                            </p>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <button
                         type="submit"
                         disabled={loading}

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import AuthButtons from "@/app/components/auth-buttons";
 
 // SVG Icon Components
@@ -88,6 +87,7 @@ const aiQueries = [
   "Which maps should I practice?",
 ];
 
+
 const stats = [
   { label: "Players Tracking", value: "10,000+" },
   { label: "Matches Analyzed", value: "1M+" },
@@ -95,16 +95,6 @@ const stats = [
 ];
 
 export default function Home() {
-  const [steamId, setSteamId] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (steamId.trim()) {
-      // TODO: Navigate to player stats page
-      console.log("Searching for:", steamId);
-    }
-  };
-
   return (
     <div className="min-h-screen">
       {/* Navigation Header */}
@@ -137,24 +127,18 @@ export default function Home() {
             Track your stats, analyze your performance, and get personalized recommendations powered by Google Gemini AI.
           </p>
 
-          {/* Search Form */}
-          <form onSubmit={handleSearch} className="max-w-xl mx-auto mb-8 animate-fade-in-up animation-delay-200">
-            <div className="relative flex items-center gap-3">
-              <input
-                type="text"
-                value={steamId}
-                onChange={(e) => setSteamId(e.target.value)}
-                placeholder="Enter Steam ID or Profile URL"
-                className="search-input pr-4"
-              />
-              <button type="submit" className="btn-primary whitespace-nowrap">
-                Analyze My Stats
-              </button>
-            </div>
-          </form>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up animation-delay-200">
+            <a href="/signup" className="btn-primary text-lg px-8 py-4">
+              Get Started Free
+            </a>
+            <a href="/login" className="btn-secondary text-lg px-8 py-4">
+              Sign In
+            </a>
+          </div>
 
           {/* Social Proof */}
-          <p className="text-[var(--text-muted)] text-sm animate-fade-in-up animation-delay-300">
+          <p className="text-[var(--text-muted)] text-sm mt-8 animate-fade-in-up animation-delay-300">
             Join <span className="text-white font-semibold">10,000+</span> players improving their game
           </p>
 

@@ -79,7 +79,7 @@ export default function Sidebar({ user, avatarUrl, username }: SidebarProps) {
         <aside className="w-64 fixed left-0 top-0 h-screen glass border-r border-[var(--cs2-border)] flex flex-col z-50">
             {/* Logo */}
             <div className="p-6 border-b border-[var(--cs2-border)]">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/dashboard" className="flex items-center gap-2">
                     <span className="text-2xl font-bold text-gradient-orange">CS2</span>
                     <span className="text-2xl font-bold text-white">Stats</span>
                 </Link>
