@@ -138,6 +138,7 @@ export default function PerformanceChart({ data, compact = false }: PerformanceC
                                 width={80}
                             />
                             <Tooltip
+                                cursor={{ fill: 'rgba(255, 107, 0, 0.1)' }}
                                 contentStyle={{
                                     backgroundColor: '#0a0a0f',
                                     border: '1px solid #2a2b38',
@@ -215,6 +216,7 @@ export default function PerformanceChart({ data, compact = false }: PerformanceC
                                 width={40}
                             />
                             <Tooltip
+                                cursor={{ fill: 'rgba(255, 107, 0, 0.1)' }}
                                 contentStyle={{
                                     backgroundColor: '#0a0a0f',
                                     border: '1px solid #2a2b38',
