@@ -18,7 +18,7 @@ interface SkillRadarChartProps {
 export default function SkillRadarChart({ stats }: SkillRadarChartProps) {
     // Helper to normalize values to 0-100 scale based on min/max ranges
     const normalize = (val: number, min: number, max: number) => {
-        if (val <= min) return 20; // Base baseline
+        if (val <= min) return 20;
         if (val >= max) return 100;
         return 20 + ((val - min) / (max - min)) * 80;
     };
@@ -28,45 +28,29 @@ export default function SkillRadarChart({ stats }: SkillRadarChartProps) {
     const dpm = (stats.total_deaths || 0) / (stats.matches_played || 1);
     const aggression = ((stats.total_kills || 0) + (stats.total_deaths || 0)) / (stats.matches_played || 1);
 
-    // Impact is broken (0 MVPs), so we replace it with "Experience" which is reliable
-    // const mvpRate = ((stats.total_mvps || 0) / (stats.matches_played || 1)) * 100; 
-
     const data = [
         {
             subject: "Aiming",
             label: "HS %",
-            idx: 0,
             value: stats.headshot_percentage || 0,
-            fullMark: 100,
-            // Pro: 60%+. Avg: 20%. User has ~45% which is distinct.
             A: normalize(stats.headshot_percentage || 0, 10, 60)
         },
         {
             subject: "Fragging",
             label: "Kills/Match",
-            idx: 1,
             value: Number(kpm.toFixed(1)),
-            fullMark: 100,
-            // Carry: 25 kills. Poor: 10 kills.
             A: normalize(kpm, 10, 25)
         },
         {
             subject: "Efficiency",
             label: "K/D",
-            idx: 2,
             value: Number(stats.kd_ratio?.toFixed(2)) || 0,
-            fullMark: 100,
-            // Dominant: 1.4. Struggling: 0.6.
             A: normalize(stats.kd_ratio || 0, 0.6, 1.4)
         },
         {
             subject: "Survival",
             label: "Deaths/Match",
-            idx: 3,
             value: Number(dpm.toFixed(1)),
-            fullMark: 100,
-            // Inverted: 15 (Excellent) - 22 (Poor)
-            // Custom normalization for inversion
             A: (() => {
                 if (dpm <= 15) return 100;
                 if (dpm >= 22) return 20;
@@ -76,13 +60,13 @@ export default function SkillRadarChart({ stats }: SkillRadarChartProps) {
         {
             subject: "Aggression",
             label: "Engage/Match",
-            idx: 4,
             value: Number(aggression.toFixed(1)),
-            fullMark: 100,
-            // Active: 45+. Passive: 30.
             A: normalize(aggression, 30, 45)
         },
     ];
+
+    // Calculate overall score (average of all normalized values)
+    const overallScore = Math.round(data.reduce((sum, d) => sum + d.A, 0) / data.length);
 
     // Reorder for visual balance (Pentagon)
     const orderedData = [
@@ -93,15 +77,50 @@ export default function SkillRadarChart({ stats }: SkillRadarChartProps) {
         data[1], // Fragging (Left)
     ];
 
+    // Get score color based on value
+    const getScoreColor = (score: number) => {
+        if (score >= 80) return '#22c55e'; // Green
+        if (score >= 60) return '#ff6b00'; // Orange
+        if (score >= 40) return '#eab308'; // Yellow
+        return '#ef4444'; // Red
+    };
+
+    // Get score label
+    const getScoreLabel = (score: number) => {
+        if (score >= 80) return 'Elite';
+        if (score >= 60) return 'Skilled';
+        if (score >= 40) return 'Average';
+        return 'Improving';
+    };
+
     return (
-        <div className="w-full h-[300px]">
-            {/* Legend / Stats Context */}
-            <div className="absolute top-4 right-4 text-xs text-[var(--text-muted)] text-right hidden sm:block">
-                <p>Based on per-match form</p>
+        <div className="w-full h-[300px] relative">
+            {/* Center Score Badge */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <div
+                    className="flex flex-col items-center bg-[var(--cs2-bg)]/90 rounded-full w-20 h-20 justify-center border-2"
+                    style={{ borderColor: getScoreColor(overallScore) }}
+                >
+                    <span
+                        className="text-2xl font-bold"
+                        style={{ color: getScoreColor(overallScore) }}
+                    >
+                        {overallScore}
+                    </span>
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">
+                        {getScoreLabel(overallScore)}
+                    </span>
+                </div>
             </div>
 
             <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={orderedData}>
+                    <defs>
+                        <linearGradient id="radarGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#ff6b00" stopOpacity={0.8} />
+                            <stop offset="100%" stopColor="#ff6b00" stopOpacity={0.2} />
+                        </linearGradient>
+                    </defs>
                     <PolarGrid stroke="#2a2b38" strokeDasharray="3 3" />
                     <PolarAngleAxis
                         dataKey="subject"
@@ -118,20 +137,33 @@ export default function SkillRadarChart({ stats }: SkillRadarChartProps) {
                         dataKey="A"
                         stroke="#ff6b00"
                         strokeWidth={2}
-                        fill="#ff6b00"
-                        fillOpacity={0.4}
+                        fill="url(#radarGradient)"
+                        fillOpacity={0.6}
                         isAnimationActive={true}
+                        animationDuration={1500}
+                        animationEasing="ease-out"
                     />
                     <Tooltip
+                        position={{ x: 0, y: -20 }}
+                        wrapperStyle={{
+                            position: 'absolute',
+                            top: 0,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 20
+                        }}
                         content={({ active, payload }) => {
                             if (active && payload && payload.length) {
-                                const data = payload[0].payload;
+                                const d = payload[0].payload;
                                 return (
-                                    <div className="bg-[#0a0a0f] border border-[#2a2b38] rounded-lg p-3 shadow-xl">
-                                        <p className="text-[var(--primary)] font-bold mb-1">{data.subject}</p>
+                                    <div className="bg-[#0a0a0f] border border-[#2a2b38] rounded-lg p-3 shadow-xl min-w-[120px]">
+                                        <p className="text-[var(--primary)] font-bold mb-1">{d.subject}</p>
                                         <div className="text-sm text-gray-300">
-                                            <span className="text-gray-500 mr-2">{data.label}:</span>
-                                            <span className="font-mono text-white">{data.value}</span>
+                                            <span className="text-gray-500 mr-2">{d.label}:</span>
+                                            <span className="font-mono text-white">{d.value}</span>
+                                        </div>
+                                        <div className="text-xs text-[var(--text-muted)] mt-1">
+                                            Score: {Math.round(d.A)}/100
                                         </div>
                                     </div>
                                 );
