@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
-import Sidebar from "@/app/components/sidebar";
 import { useRouter } from "next/navigation";
 
 export interface Favorite {
@@ -60,100 +59,96 @@ export default function FavoritesPage({ user }: { user: User }) {
     };
 
     return (
-        <div className="min-h-screen flex">
-            <Sidebar user={user} />
+        <>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold mb-2">
+                    <span className="text-gradient-orange">Favorite</span> Players
+                </h1>
+                <p className="text-[var(--text-secondary)]">
+                    Track your favorite CS2 players and monitor their stats.
+                </p>
+            </div>
 
-            <main className="flex-1 ml-64 p-8">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">
-                        <span className="text-gradient-orange">Favorite</span> Players
-                    </h1>
-                    <p className="text-[var(--text-secondary)]">
-                        Track your favorite CS2 players and monitor their stats.
-                    </p>
-                </div>
-
-                {loading ? (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {[1, 2, 3].map((i) => (
-                            <div key={i} className="feature-card animate-pulse">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-[var(--cs2-surface)]" />
-                                    <div className="flex-1">
-                                        <div className="h-4 bg-[var(--cs2-surface)] rounded w-24 mb-2" />
-                                        <div className="h-3 bg-[var(--cs2-surface)] rounded w-32" />
-                                    </div>
+            {loading ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="feature-card animate-pulse">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-[var(--cs2-surface)]" />
+                                <div className="flex-1">
+                                    <div className="h-4 bg-[var(--cs2-surface)] rounded w-24 mb-2" />
+                                    <div className="h-3 bg-[var(--cs2-surface)] rounded w-32" />
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                ) : favorites.length === 0 ? (
-                    <div className="glass rounded-2xl p-8 border border-[var(--cs2-border)] text-center">
-                        <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center mx-auto mb-4">
-                            <StarFilledIcon />
                         </div>
-                        <h2 className="text-xl font-semibold mb-2">No Favorites Yet</h2>
-                        <p className="text-[var(--text-secondary)] mb-6 max-w-md mx-auto">
-                            Search for players and add them to your favorites to quickly access their stats.
-                        </p>
-                        <a href="/dashboard/search" className="btn-primary inline-block">
-                            Search Players
-                        </a>
+                    ))}
+                </div>
+            ) : favorites.length === 0 ? (
+                <div className="glass rounded-2xl p-8 border border-[var(--cs2-border)] text-center">
+                    <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center mx-auto mb-4">
+                        <StarFilledIcon />
                     </div>
-                ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {favorites.map((favorite) => (
-                            <div
-                                key={favorite.id}
-                                onClick={() => router.push(`/player/${favorite.steam_id}`)}
-                                className="feature-card group cursor-pointer relative hover:border-[var(--cs2-orange)] transition-colors"
+                    <h2 className="text-xl font-semibold mb-2">No Favorites Yet</h2>
+                    <p className="text-[var(--text-secondary)] mb-6 max-w-md mx-auto">
+                        Search for players and add them to your favorites to quickly access their stats.
+                    </p>
+                    <a href="/dashboard/search" className="btn-primary inline-block">
+                        Search Players
+                    </a>
+                </div>
+            ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {favorites.map((favorite) => (
+                        <div
+                            key={favorite.id}
+                            onClick={() => router.push(`/player/${favorite.steam_id}`)}
+                            className="feature-card group cursor-pointer relative hover:border-[var(--cs2-orange)] transition-colors"
+                        >
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeFavorite(favorite.steam_id);
+                                }}
+                                className="absolute top-4 right-4 p-2 rounded-lg text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100 z-10"
+                                title="Remove from favorites"
                             >
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        removeFavorite(favorite.steam_id);
-                                    }}
-                                    className="absolute top-4 right-4 p-2 rounded-lg text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100 z-10"
-                                    title="Remove from favorites"
-                                >
-                                    <TrashIcon />
-                                </button>
+                                <TrashIcon />
+                            </button>
 
-                                <div className="flex items-center gap-4 mb-4">
-                                    {favorite.avatar_url ? (
-                                        <img
-                                            src={favorite.avatar_url}
-                                            alt={favorite.nickname || "Player"}
-                                            className="w-16 h-16 rounded-full border-2 border-[var(--cs2-orange)] object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-[var(--cs2-orange)] font-bold text-xl border-2 border-[var(--cs2-border)]">
-                                            {favorite.nickname?.charAt(0).toUpperCase() || "P"}
-                                        </div>
-                                    )}
-                                    <div>
-                                        <h3 className="font-bold text-white text-lg group-hover:text-[var(--cs2-orange)] transition-colors">
-                                            {favorite.nickname || `Player`}
-                                        </h3>
-                                        <p className="text-sm text-[var(--text-muted)]">
-                                            {favorite.steam_id}
-                                        </p>
+                            <div className="flex items-center gap-4 mb-4">
+                                {favorite.avatar_url ? (
+                                    <img
+                                        src={favorite.avatar_url}
+                                        alt={favorite.nickname || "Player"}
+                                        className="w-16 h-16 rounded-full border-2 border-[var(--cs2-orange)] object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-[var(--cs2-orange)] font-bold text-xl border-2 border-[var(--cs2-border)]">
+                                        {favorite.nickname?.charAt(0).toUpperCase() || "P"}
                                     </div>
-                                </div>
-
-                                <div className="flex justify-end">
-                                    <span className="text-xs font-medium text-[var(--cs2-orange)] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                                        View Stats
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </span>
+                                )}
+                                <div>
+                                    <h3 className="font-bold text-white text-lg group-hover:text-[var(--cs2-orange)] transition-colors">
+                                        {favorite.nickname || `Player`}
+                                    </h3>
+                                    <p className="text-sm text-[var(--text-muted)]">
+                                        {favorite.steam_id}
+                                    </p>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                )}
-            </main>
-        </div>
+
+                            <div className="flex justify-end">
+                                <span className="text-xs font-medium text-[var(--cs2-orange)] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                    View Stats
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </>
     );
 }

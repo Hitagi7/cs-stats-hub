@@ -28,10 +28,10 @@
 ## Authentication (Supabase Auth)
 - [x] Sign up page
 - [x] Sign in page
-- [ ] Password reset
+- [x] Password reset
 - [x] Auth callback route
 - [x] Protected routes (middleware)
-- [ ] User profile management
+- [x] User profile management
 
 ---
 
@@ -140,7 +140,7 @@
 |----------|-----------|-------|----------|
 | Tech Stack Setup | 6 | 6 | 100% |
 | Landing Page | 11 | 11 | 100% |
-| Authentication | 4 | 6 | 67% |
+| Authentication | 6 | 6 | 100% |
 | Database | 5 | 6 | 83% |
 | API Routes | 6 | 6 | 100% |
 | Steam API Integration | 7 | 7 | 100% |

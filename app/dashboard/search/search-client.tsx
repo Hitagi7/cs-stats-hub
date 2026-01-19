@@ -4,7 +4,6 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/app/components/sidebar";
 
 interface SearchResult {
     steam_id: string;
@@ -91,132 +90,128 @@ export default function SearchClient({ user }: { user: User }) {
     };
 
     return (
-        <div className="min-h-screen flex">
-            <Sidebar user={user} />
+        <>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold mb-2">
+                    <span className="text-gradient-orange">Search</span> Player
+                </h1>
+                <p className="text-[var(--text-secondary)]">
+                    Look up any CS2 player by their Steam ID or profile URL.
+                </p>
+            </div>
 
-            <main className="flex-1 ml-64 p-8">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">
-                        <span className="text-gradient-orange">Search</span> Player
-                    </h1>
-                    <p className="text-[var(--text-secondary)]">
-                        Look up any CS2 player by their Steam ID or profile URL.
+            {/* Search Form */}
+            <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)] mb-8">
+                <form onSubmit={handleSearch} className="flex gap-4">
+                    <input
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Enter Steam ID, Steam64 ID, or Profile URL"
+                        className="search-input flex-1"
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="btn-primary disabled:opacity-50"
+                    >
+                        {loading ? "Searching..." : "Search"}
+                    </button>
+                </form>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-8">
+                    {error}
+                </div>
+            )}
+
+            {/* Search Result */}
+            {result && (
+                <div
+                    onClick={() => router.push(`/player/${result.steam_id}`)}
+                    className="glass rounded-2xl p-6 border border-[var(--cs2-border)] group cursor-pointer hover:border-[var(--cs2-orange)] transition-colors"
+                >
+                    <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                            {result.avatar_url ? (
+                                <img
+                                    src={result.avatar_url}
+                                    alt={result.username || "Player"}
+                                    className="w-16 h-16 rounded-full border-2 border-[var(--cs2-orange)]"
+                                />
+                            ) : (
+                                <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-2xl font-bold text-[var(--cs2-orange)]">
+                                    {result.username?.charAt(0).toUpperCase() || "P"}
+                                </div>
+                            )}
+                            <div>
+                                <h2 className="text-2xl font-bold text-white">
+                                    {result.username || "Unknown Player"}
+                                </h2>
+                                <p className="text-[var(--text-muted)] text-sm">{result.steam_id}</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                addToFavorites();
+                            }}
+                            disabled={addingFavorite || favoriteAdded}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${favoriteAdded
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-[var(--cs2-surface)] text-[var(--text-secondary)] hover:text-[var(--cs2-orange)]"
+                                }`}
+                        >
+                            <StarIcon />
+                            {favoriteAdded ? "Added!" : addingFavorite ? "Adding..." : "Add to Favorites"}
+                        </button>
+                    </div>
+
+                    {result.source === "placeholder" ? (
+                        <div className="text-center py-8 text-[var(--text-secondary)]">
+                            <p className="mb-2">Steam API integration pending</p>
+                            <p className="text-sm">Full stats will be available once integrated.</p>
+                        </div>
+                    ) : (
+                        <div className="grid md:grid-cols-4 gap-4">
+                            <div className="feature-card text-center">
+                                <p className="text-[var(--text-secondary)] text-sm mb-1">K/D Ratio</p>
+                                <p className="text-2xl font-bold text-white">{result.kd_ratio ?? "--"}</p>
+                            </div>
+                            <div className="feature-card text-center">
+                                <p className="text-[var(--text-secondary)] text-sm mb-1">Win Rate</p>
+                                <p className="text-2xl font-bold text-white">
+                                    {result.win_rate ? `${result.win_rate}%` : "--"}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex justify-end mt-6 pt-6 border-t border-[var(--cs2-border)]">
+                        <span className="text-sm font-medium text-[var(--cs2-orange)] flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                            View Full Profile
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            )}
+
+            {/* Empty State */}
+            {!result && !loading && !error && (
+                <div className="glass rounded-2xl p-12 border border-[var(--cs2-border)] text-center">
+                    <div className="w-20 h-20 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center mx-auto mb-4">
+                        <SearchIconLarge />
+                    </div>
+                    <h2 className="text-xl font-semibold mb-2">Find Any CS2 Player</h2>
+                    <p className="text-[var(--text-secondary)] max-w-md mx-auto">
+                        Enter a Steam ID, Steam64 ID, or profile URL to look up player statistics.
                     </p>
                 </div>
-
-                {/* Search Form */}
-                <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)] mb-8">
-                    <form onSubmit={handleSearch} className="flex gap-4">
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Enter Steam ID, Steam64 ID, or Profile URL"
-                            className="search-input flex-1"
-                        />
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="btn-primary disabled:opacity-50"
-                        >
-                            {loading ? "Searching..." : "Search"}
-                        </button>
-                    </form>
-                </div>
-
-                {/* Error Message */}
-                {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-8">
-                        {error}
-                    </div>
-                )}
-
-                {/* Search Result */}
-                {result && (
-                    <div
-                        onClick={() => router.push(`/player/${result.steam_id}`)}
-                        className="glass rounded-2xl p-6 border border-[var(--cs2-border)] group cursor-pointer hover:border-[var(--cs2-orange)] transition-colors"
-                    >
-                        <div className="flex items-start justify-between mb-6">
-                            <div className="flex items-center gap-4">
-                                {result.avatar_url ? (
-                                    <img
-                                        src={result.avatar_url}
-                                        alt={result.username || "Player"}
-                                        className="w-16 h-16 rounded-full border-2 border-[var(--cs2-orange)]"
-                                    />
-                                ) : (
-                                    <div className="w-16 h-16 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-2xl font-bold text-[var(--cs2-orange)]">
-                                        {result.username?.charAt(0).toUpperCase() || "P"}
-                                    </div>
-                                )}
-                                <div>
-                                    <h2 className="text-2xl font-bold text-white">
-                                        {result.username || "Unknown Player"}
-                                    </h2>
-                                    <p className="text-[var(--text-muted)] text-sm">{result.steam_id}</p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    addToFavorites();
-                                }}
-                                disabled={addingFavorite || favoriteAdded}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${favoriteAdded
-                                    ? "bg-green-500/20 text-green-400"
-                                    : "bg-[var(--cs2-surface)] text-[var(--text-secondary)] hover:text-[var(--cs2-orange)]"
-                                    }`}
-                            >
-                                <StarIcon />
-                                {favoriteAdded ? "Added!" : addingFavorite ? "Adding..." : "Add to Favorites"}
-                            </button>
-                        </div>
-
-                        {result.source === "placeholder" ? (
-                            <div className="text-center py-8 text-[var(--text-secondary)]">
-                                <p className="mb-2">Steam API integration pending</p>
-                                <p className="text-sm">Full stats will be available once integrated.</p>
-                            </div>
-                        ) : (
-                            <div className="grid md:grid-cols-4 gap-4">
-                                <div className="feature-card text-center">
-                                    <p className="text-[var(--text-secondary)] text-sm mb-1">K/D Ratio</p>
-                                    <p className="text-2xl font-bold text-white">{result.kd_ratio ?? "--"}</p>
-                                </div>
-                                <div className="feature-card text-center">
-                                    <p className="text-[var(--text-secondary)] text-sm mb-1">Win Rate</p>
-                                    <p className="text-2xl font-bold text-white">
-                                        {result.win_rate ? `${result.win_rate}%` : "--"}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="flex justify-end mt-6 pt-6 border-t border-[var(--cs2-border)]">
-                            <span className="text-sm font-medium text-[var(--cs2-orange)] flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                                View Full Profile
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-                )}
-
-                {/* Empty State */}
-                {!result && !loading && !error && (
-                    <div className="glass rounded-2xl p-12 border border-[var(--cs2-border)] text-center">
-                        <div className="w-20 h-20 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center mx-auto mb-4">
-                            <SearchIconLarge />
-                        </div>
-                        <h2 className="text-xl font-semibold mb-2">Find Any CS2 Player</h2>
-                        <p className="text-[var(--text-secondary)] max-w-md mx-auto">
-                            Enter a Steam ID, Steam64 ID, or profile URL to look up player statistics.
-                        </p>
-                    </div>
-                )}
-            </main>
-        </div>
+            )}
+        </>
     );
 }

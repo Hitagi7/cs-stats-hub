@@ -1,9 +1,7 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
 
 // SVG Icon Components
 const ChartIcon = ({ className = "w-8 h-8" }: { className?: string }) => (
@@ -32,43 +30,6 @@ const CrosshairIcon = ({ className = "w-8 h-8" }: { className?: string }) => (
     </svg>
 );
 
-// Navigation Icons
-const HomeIcon = () => (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-    </svg>
-);
-
-const StatsIcon = () => (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-    </svg>
-);
-
-const StarIcon = () => (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-    </svg>
-);
-
-const AIIcon = () => (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-    </svg>
-);
-
-const SearchIcon = () => (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-    </svg>
-);
-
-const LogoutIcon = () => (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-    </svg>
-);
-
 import { UserStats, EnrichedFavorite, StatsHistoryPoint } from "@/lib/stats";
 import PerformanceChart from "./stats/performance-chart";
 
@@ -80,10 +41,6 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ user, stats, favorites, history }: DashboardClientProps) {
-    const supabase = createClient();
-    const router = useRouter();
-    const pathname = usePathname();
-
     const statsData = [
         { label: "K/D Ratio", value: stats?.kd_ratio?.toFixed(2) || "--", icon: <ChartIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
         { label: "Win Rate", value: stats?.win_rate ? `${stats.win_rate}%` : "--", icon: <TargetIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
@@ -91,205 +48,124 @@ export default function DashboardClient({ user, stats, favorites, history }: Das
         { label: "Headshots", value: stats?.headshot_percentage ? `${stats.headshot_percentage}%` : "--", icon: <CrosshairIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
     ];
 
-    const navItems = [
-        { label: "Dashboard", href: "/dashboard", icon: <HomeIcon /> },
-        { label: "My Stats", href: "/dashboard/stats", icon: <StatsIcon /> },
-        { label: "Favorites", href: "/dashboard/favorites", icon: <StarIcon /> },
-        { label: "Search Player", href: "/dashboard/search", icon: <SearchIcon /> },
-        { label: "AI Insights", href: "/dashboard/ai", icon: <AIIcon /> },
-    ];
-
-    const handleSignOut = async () => {
-        await supabase.auth.signOut();
-        router.push("/");
-    };
-
     return (
-        <div className="min-h-screen flex">
-            {/* Sidebar */}
-            <aside className="w-64 fixed left-0 top-0 h-screen glass border-r border-[var(--cs2-border)] flex flex-col z-50">
-                {/* Logo */}
-                <div className="p-6 border-b border-[var(--cs2-border)]">
-                    <Link href="/" className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-gradient-orange">CS2</span>
-                        <span className="text-2xl font-bold text-white">Stats</span>
+        <>
+            {/* Welcome Section */}
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold mb-2">
+                    Welcome back, <span className="text-gradient-orange">{user.email?.split("@")[0]}</span>
+                </h1>
+                <p className="text-[var(--text-secondary)]">
+                    Track your CS2 performance and get AI-powered insights.
+                </p>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid md:grid-cols-4 gap-4 mb-8">
+                {statsData.map((stat, index) => (
+                    <div
+                        key={index}
+                        className="feature-card text-center"
+                    >
+                        <div className="flex justify-center mb-3">{stat.icon}</div>
+                        <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+                        <div className="text-sm text-[var(--text-secondary)]">{stat.label}</div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Main Dashboard Grid */}
+            <div className="grid lg:grid-cols-2 gap-6">
+                {/* Search Player */}
+                <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)] flex flex-col">
+                    <h2 className="text-xl font-semibold mb-4">Search Player</h2>
+                    <p className="text-[var(--text-secondary)] text-sm mb-4">
+                        Look up any CS2 player by their Steam ID or profile URL.
+                    </p>
+                    <Link href="/dashboard/search" className="btn-primary whitespace-nowrap text-center mt-auto">
+                        Go to Search
                     </Link>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 p-4">
-                    <ul className="space-y-2">
-                        {navItems.map((item) => {
-                            const isActive = pathname === item.href;
-                            return (
-                                <li key={item.href}>
-                                    <Link
-                                        href={item.href}
-                                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
-                                            ? "bg-[var(--cs2-orange)] text-white"
-                                            : "text-[var(--text-secondary)] hover:bg-[var(--cs2-surface)] hover:text-white"
-                                            }`}
-                                    >
-                                        {item.icon}
-                                        <span className="font-medium">{item.label}</span>
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </nav>
-
-                {/* User Section */}
-                <div className="p-4 border-t border-[var(--cs2-border)]">
-                    <div className="flex items-center gap-3 mb-4 px-2">
-                        <div className="w-10 h-10 rounded-full bg-[var(--cs2-surface)] flex items-center justify-center text-[var(--cs2-orange)] font-bold">
-                            {user.email?.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">
-                                {user.email?.split("@")[0]}
-                            </p>
-                            <p className="text-xs text-[var(--text-muted)] truncate">
-                                {user.email}
-                            </p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={handleSignOut}
-                        className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--cs2-surface)] hover:text-white transition-all"
-                    >
-                        <LogoutIcon />
-                        <span className="font-medium">Sign Out</span>
-                    </button>
-                </div>
-            </aside>
-
-            {/* Main Content */}
-            <main className="flex-1 ml-64 p-8">
-                {/* Welcome Section */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">
-                        Welcome back, <span className="text-gradient-orange">{user.email?.split("@")[0]}</span>
-                    </h1>
-                    <p className="text-[var(--text-secondary)]">
-                        Track your CS2 performance and get AI-powered insights.
+                {/* AI Chat Quick Access */}
+                <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)] flex flex-col">
+                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <span className="text-[var(--ai-cyan)]">AI</span> Insights
+                    </h2>
+                    <p className="text-[var(--text-secondary)] text-sm mb-4">
+                        Ask questions about your gameplay and get personalized tips.
                     </p>
+                    <Link href="/dashboard/ai" className="btn-secondary w-full block text-center mt-auto">
+                        Open AI Chat
+                    </Link>
                 </div>
+            </div>
 
-                {/* Quick Stats */}
-                <div className="grid md:grid-cols-4 gap-4 mb-8">
-                    {statsData.map((stat, index) => (
-                        <div
-                            key={index}
-                            className="feature-card text-center"
-                        >
-                            <div className="flex justify-center mb-3">{stat.icon}</div>
-                            <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-                            <div className="text-sm text-[var(--text-secondary)]">{stat.label}</div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Main Dashboard Grid */}
-                <div className="grid lg:grid-cols-2 gap-6">
-                    {/* Search Player */}
-                    <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)] flex flex-col">
-                        <h2 className="text-xl font-semibold mb-4">Search Player</h2>
-                        <p className="text-[var(--text-secondary)] text-sm mb-4">
-                            Look up any CS2 player by their Steam ID or profile URL.
-                        </p>
-                        <form className="flex gap-3 mt-auto">
-                            <input
-                                type="text"
-                                placeholder="Enter Steam ID or Profile URL"
-                                className="search-input flex-1"
-                            />
-                            <button type="submit" className="btn-primary whitespace-nowrap">
-                                Search
-                            </button>
-                        </form>
+            {/* Performance Trends */}
+            <div className="mt-8">
+                <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-semibold">Performance Trends</h2>
+                        <p className="text-xs text-[var(--text-muted)]">Last 30 Days Breakdown</p>
                     </div>
+                    <PerformanceChart data={history || []} />
+                </div>
+            </div>
 
-                    {/* AI Chat Quick Access */}
-                    <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)] flex flex-col">
-                        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                            <span className="text-[var(--ai-cyan)]">AI</span> Insights
-                        </h2>
-                        <p className="text-[var(--text-secondary)] text-sm mb-4">
-                            Ask questions about your gameplay and get personalized tips.
-                        </p>
-                        <Link href="/dashboard/ai" className="btn-secondary w-full block text-center mt-auto">
-                            Open AI Chat
+            {/* Favorites Widget */}
+            <div className="mt-8">
+                <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-semibold">Favorite Players</h2>
+                        <Link href="/dashboard/favorites" className="text-sm text-[var(--cs2-orange)] hover:text-white transition-colors">
+                            View All
                         </Link>
                     </div>
-                </div>
 
-                {/* Performance Trends */}
-                <div className="mt-8">
-                    <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-semibold">Performance Trends</h2>
-                            <p className="text-xs text-[var(--text-muted)]">Last 30 Days Breakdown</p>
-                        </div>
-                        <PerformanceChart data={history || []} />
-                    </div>
-                </div>
-
-                {/* Favorites Widget */}
-                <div className="mt-8">
-                    <div className="glass rounded-2xl p-6 border border-[var(--cs2-border)]">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-semibold">Favorite Players</h2>
-                            <Link href="/dashboard/favorites" className="text-sm text-[var(--cs2-orange)] hover:text-white transition-colors">
-                                View All
-                            </Link>
-                        </div>
-
-                        {favorites && favorites.length > 0 ? (
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {favorites.slice(0, 3).map((fav) => (
-                                    <Link
-                                        key={fav.steam_id}
-                                        href={`/player/${fav.steam_id}`}
-                                        className="block group"
-                                    >
-                                        <div className="bg-[var(--cs2-surface)] border border-[var(--cs2-border)] rounded-xl p-4 hover:border-[var(--cs2-orange)] transition-colors relative overflow-hidden">
-                                            <div className="flex items-center gap-4">
-                                                {fav.avatar_url ? (
-                                                    <img
-                                                        src={fav.avatar_url}
-                                                        alt={fav.nickname || fav.steam_id}
-                                                        className="w-12 h-12 rounded-full border border-[var(--cs2-border)] group-hover:border-[var(--cs2-orange)] transition-colors"
-                                                    />
-                                                ) : (
-                                                    <div className="w-12 h-12 rounded-full bg-[#1a1b26] flex items-center justify-center text-[var(--cs2-orange)] font-bold border border-[var(--cs2-border)]">
-                                                        {(fav.nickname || fav.steam_id).charAt(0).toUpperCase()}
-                                                    </div>
-                                                )}
-                                                <div className="flex-1 min-w-0">
-                                                    <h3 className="font-semibold text-white truncate group-hover:text-[var(--cs2-orange)] transition-colors">
-                                                        {fav.nickname || `Player_${fav.steam_id.slice(-4)}`}
-                                                    </h3>
-                                                    <p className="text-xs text-[var(--text-muted)] truncate">
-                                                        K/D: <span className="text-white">{fav.stats?.kd_ratio?.toFixed(2) || "--"}</span> • Win: <span className="text-white">{fav.stats?.win_rate ? `${fav.stats.win_rate.toFixed(0)}%` : "--"}</span>
-                                                    </p>
+                    {favorites && favorites.length > 0 ? (
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {favorites.slice(0, 3).map((fav) => (
+                                <Link
+                                    key={fav.steam_id}
+                                    href={`/player/${fav.steam_id}`}
+                                    className="block group"
+                                >
+                                    <div className="bg-[var(--cs2-surface)] border border-[var(--cs2-border)] rounded-xl p-4 hover:border-[var(--cs2-orange)] transition-colors relative overflow-hidden">
+                                        <div className="flex items-center gap-4">
+                                            {fav.avatar_url ? (
+                                                <img
+                                                    src={fav.avatar_url}
+                                                    alt={fav.nickname || fav.steam_id}
+                                                    className="w-12 h-12 rounded-full border border-[var(--cs2-border)] group-hover:border-[var(--cs2-orange)] transition-colors"
+                                                />
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-full bg-[#1a1b26] flex items-center justify-center text-[var(--cs2-orange)] font-bold border border-[var(--cs2-border)]">
+                                                    {(fav.nickname || fav.steam_id).charAt(0).toUpperCase()}
                                                 </div>
+                                            )}
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-semibold text-white truncate group-hover:text-[var(--cs2-orange)] transition-colors">
+                                                    {fav.nickname || `Player_${fav.steam_id.slice(-4)}`}
+                                                </h3>
+                                                <p className="text-xs text-[var(--text-muted)] truncate">
+                                                    K/D: <span className="text-white">{fav.stats?.kd_ratio?.toFixed(2) || "--"}</span> • Win: <span className="text-white">{fav.stats?.win_rate ? `${fav.stats.win_rate.toFixed(0)}%` : "--"}</span>
+                                                </p>
                                             </div>
                                         </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-12 text-[var(--text-secondary)]">
-                                <p className="mb-2">No favorite players yet</p>
-                                <Link href="/dashboard/search" className="text-sm text-[var(--cs2-orange)] hover:underline">
-                                    Search for players to add
+                                    </div>
                                 </Link>
-                            </div>
-                        )}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 text-[var(--text-secondary)]">
+                            <p className="mb-2">No favorite players yet</p>
+                            <Link href="/dashboard/search" className="text-sm text-[var(--cs2-orange)] hover:underline">
+                                Search for players to add
+                            </Link>
+                        </div>
+                    )}
                 </div>
-            </main>
-        </div>
+            </div>
+        </>
     );
 }
