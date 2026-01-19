@@ -31,6 +31,7 @@ const CrosshairIcon = ({ className = "w-8 h-8" }: { className?: string }) => (
 );
 
 import { UserStats, EnrichedFavorite, StatsHistoryPoint } from "@/lib/stats";
+import { useRealtimeStats } from "@/lib/hooks/useRealtimeStats";
 import PerformanceChart from "./stats/performance-chart";
 
 interface DashboardClientProps {
@@ -41,11 +42,14 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ user, stats, favorites, history }: DashboardClientProps) {
+    // Subscribe to realtime stats updates
+    const liveStats = useRealtimeStats(stats);
+
     const statsData = [
-        { label: "K/D Ratio", value: stats?.kd_ratio?.toFixed(2) || "--", icon: <ChartIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
-        { label: "Win Rate", value: stats?.win_rate ? `${stats.win_rate}%` : "--", icon: <TargetIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
-        { label: "Matches", value: stats?.matches_played || "--", icon: <SwordsIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
-        { label: "Headshots", value: stats?.headshot_percentage ? `${stats.headshot_percentage}%` : "--", icon: <CrosshairIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+        { label: "K/D Ratio", value: liveStats?.kd_ratio?.toFixed(2) || "--", icon: <ChartIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+        { label: "Win Rate", value: liveStats?.win_rate ? `${liveStats.win_rate}%` : "--", icon: <TargetIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+        { label: "Matches", value: liveStats?.matches_played || "--", icon: <SwordsIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
+        { label: "Headshots", value: liveStats?.headshot_percentage ? `${liveStats.headshot_percentage}%` : "--", icon: <CrosshairIcon className="w-8 h-8 text-[var(--cs2-orange)]" /> },
     ];
 
     return (

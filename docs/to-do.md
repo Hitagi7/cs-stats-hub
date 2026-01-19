@@ -41,7 +41,7 @@
 - [x] Create `match_history` table
 - [x] Row Level Security (RLS) policies
 - [x] TypeScript types generated
-- [ ] Realtime subscriptions setup
+- [x] Realtime subscriptions setup
 
 ---
 
@@ -70,9 +70,9 @@
 
 ### Dashboard (`/dashboard`)
 - [x] Dashboard layout with sidebar
-- [x] Reusable sidebar component
+- [x] Reusable sidebar component with Steam avatar
 - [x] Performance trend charts (with metric selector)
-- [ ] Recent Matches (Replaced by Performance Trends)
+- [x] Recent Matches (Replaced by Performance Trends)
 - [x] Quick stats overview (connected)
 - [x] Favorites widget (connected)
 
@@ -141,14 +141,14 @@
 | Tech Stack Setup | 6 | 6 | 100% |
 | Landing Page | 11 | 11 | 100% |
 | Authentication | 6 | 6 | 100% |
-| Database | 5 | 6 | 83% |
+| Database | 6 | 6 | 100% |
 | API Routes | 6 | 6 | 100% |
 | Steam API Integration | 7 | 7 | 100% |
-| Pages & Features | 23 | 26 | 88% |
+| Pages & Features | 24 | 24 | 100% |
 | Key Features | 6 | 6 | 100% |
 | Polish & Optimization | 6 | 6 | 100% |
-| **Total** | **74** | **80** | **93%** |
+| **Total** | **78** | **78** | **100%** |
 
 ```
-Overall Progress: █████████████████████████████░ 93%
+Overall Progress: ██████████████████████████████ 100%
 ```
