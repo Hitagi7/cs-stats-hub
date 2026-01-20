@@ -280,40 +280,8 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-[var(--cs2-border)]">
+      <footer className="py-12">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8">
-            {/* Brand */}
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl font-bold text-gradient-orange">CS2</span>
-                <span className="text-xl font-bold text-white">Stats Hub</span>
-              </div>
-              <p className="text-[var(--text-secondary)] max-w-sm">
-                Track your Counter-Strike 2 performance and get AI-powered insights to improve your gameplay.
-              </p>
-            </div>
-
-            {/* Links */}
-            <div>
-              <h4 className="font-semibold text-white mb-4">Product</h4>
-              <ul className="space-y-2">
-                <li><a href="#features" className="text-[var(--text-secondary)] hover:text-white transition-colors">Features</a></li>
-                <li><a href="#ai-insights" className="text-[var(--text-secondary)] hover:text-white transition-colors">AI Insights</a></li>
-                <li><a href="#" className="text-[var(--text-secondary)] hover:text-white transition-colors">Dashboard</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-[var(--text-secondary)] hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-[var(--text-secondary)] hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-[var(--text-secondary)] hover:text-white transition-colors">GitHub</a></li>
-              </ul>
-            </div>
-          </div>
-
           <div className="border-t border-[var(--cs2-border)] mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-[var(--text-muted)] text-sm">
               © 2026 <a href="https://github.com/Hitagi7" target="_blank" rel="noopener noreferrer" className="text-[var(--cs2-orange)] hover:text-white transition-colors">Hitagi7</a>. All rights reserved.
